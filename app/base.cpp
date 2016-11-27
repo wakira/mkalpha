@@ -1,10 +1,6 @@
 #include "app/base.h"
 #include "kernel/kernel.h"
 
-AppBase::AppBase() {
-    _m_thread = 0;
-    _m_event_queue = 0;
-}
 
 void AppBase::_launch() {
     // get a new event queue
@@ -25,5 +21,5 @@ void AppBase::_release() {
 }
 
 bool AppBase::register_io_event_handler(IOEvent ev, AppVoidFuncPtr handler) {
-    Kernel::get_instance().register_io_event_handler(this, ev, handler);
+    return Kernel::get_instance().register_io_event_handler(this, ev, handler);
 }

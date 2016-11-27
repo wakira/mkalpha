@@ -7,3 +7,7 @@ void AppLauncher::register_app(AppVoidFuncPtr launcher_ptr) {
 void AppLauncher::run() {
     // TODO
 }
+
+void AppLauncher::release() {
+    // TODO
+}

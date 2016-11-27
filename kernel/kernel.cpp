@@ -4,7 +4,6 @@
 
 Kernel::Kernel() {
     _running = false;
-    _app_id_cnt = 0;
     _launcher_instance = 0;
     _launcher_launch = 0;
     _app_foreground = 0;
@@ -53,15 +52,14 @@ void Kernel::run_kernel() {
     _event_queue->dispatch_forever();
 }
 
-void Kernel::launch_app(int *instance, int launch_ptr) {
+void Kernel::launch_app(AppBase *instance, AppVoidFuncPtr launch_ptr) {
     _event_queue->call(callback(this, &Kernel::_launch_app),
             instance, launch_ptr);
 }
 
 void Kernel::_launch_app(AppBase *instance, AppVoidFuncPtr launcher_ptr) {
     _kernel_mutex.lock();
-    _id_apps_running[instance] = _app_id_cnt;
-    _app_id_cnt += 1;
+    _apps_running.push_back(instance);
     _app_foreground = instance;
     (instance->*launcher_ptr)();
     _kernel_mutex.unlock();
@@ -69,14 +67,14 @@ void Kernel::_launch_app(AppBase *instance, AppVoidFuncPtr launcher_ptr) {
 
 void Kernel::_on_io_event(IOEvent ev) {
     switch (ev) {
-        switch JOYSTICK_FIRE:
-        switch JOYSTICK_UP:
-        switch JOYSTICK_DOWN:
-        switch JOYSTICK_LEFT:
-        switch JOYSTICK_RIGHT:
+        case JOYSTICK_FIRE:
+        case JOYSTICK_UP:
+        case JOYSTICK_DOWN:
+        case JOYSTICK_LEFT:
+        case JOYSTICK_RIGHT:
             // TODO call foreground app's registered handler
             break;
-        switch JOYSTICK_LONG_PRESS:
+        case JOYSTICK_LONG_PRESS:
             // TODO kill the foreground app, reclaim resources held by that app
             break;
         // and other events...
@@ -101,7 +99,8 @@ void Kernel::_setup_isr() {
     // TODO
 }
 
-void Kernel::register_io_event_handler(AppBase *app, IOEvent event,
+bool Kernel::register_io_event_handler(AppBase *app, IOEvent event,
         AppVoidFuncPtr handler) {
     // TODO
+    return false;
 }

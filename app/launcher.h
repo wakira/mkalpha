@@ -9,7 +9,7 @@ public:
     virtual void run();
     // virtual void go_background();
     // virtual void go_foreground();
-    // virtual void release();
+    virtual void release();
 };
 
 #endif

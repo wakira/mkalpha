@@ -26,14 +26,15 @@ public:
     }
 
     void register_launcher(AppBase *instance, AppVoidFuncPtr launcher_ptr);
-    void register_io_event_handler(AppBase *app, IOEvent event, AppVoidFuncPtr handler);
+    bool register_io_event_handler(AppBase *app, IOEvent event, AppVoidFuncPtr handler);
     void launch_app(AppBase *instance, AppVoidFuncPtr launcher_ptr);
     void run_kernel(); // run_kernel() never returns
 private:
     // private routines
     void _panic(std::string info = "");
+    void _launch_app(AppBase *instance, AppVoidFuncPtr launcher_ptr);
     void _setup_isr();
-    void _on_io_event(); 
+    void _on_io_event(IOEvent ev); 
 
     // isr
     void _isr_joystick_fire_rise();
@@ -46,9 +47,8 @@ private:
     bool _running;
     AppBase *_launcher_instance;
     AppVoidFuncPtr _launcher_launch;
-    int _app_id_cnt;
     std::vector<AppBase*> _apps_running;
-    std::map<AppBase*, std::map<IOEvent, AppVoidFuncPtr>> _app_io_handlers;
+    std::map<AppBase*, std::map<IOEvent, AppVoidFuncPtr> > _app_io_handlers;
     AppBase *_app_foreground;
 
     // IO devices
