@@ -1,0 +1,14 @@
+#ifndef OSLIB_IO_EVENTS_H_
+#define OSLIB_IO_EVENTS_H_
+
+enum IOEvent {
+    JOYSTICK_FIRE,
+    JOYSTICK_LONG_PRESS,
+    JOYSTICK_UP,
+    JOYSTICK_DOWN,
+    JOYSTICK_LEFT,
+    JOYSTICK_RIGHT,
+    WEBSOCKET_IN // wifi
+};
+
+#endif
