@@ -7,9 +7,9 @@ Kernel &kernel = Kernel::get_instance();
 int main() {
     AppLauncher *launcher = new AppLauncher();
     // register apps to launcher
-    launcher->register_app(&AppBlinker::_on_launch);
+    launcher->register_app(&AppBlinker::_launch);
     // register the launch function of launcher itself to kernel
-    kernel.register_launcher(launcher, &AppLauncher::_on_launch);
+    kernel.register_launcher(launcher, &AppLauncher::_launch);
     // run kernel
     kernel.run_kernel();
 }

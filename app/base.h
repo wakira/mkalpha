@@ -20,13 +20,13 @@ public:
     virtual void go_background() {} // when app is put to background
     virtual void go_foreground() {} // when app goes back to foreground
     virtual void release(); // when the kernel asks App to release all its resource locks
-    void _on_launch(); // executed in App's own thread, calls run()
+    void _launch(); // this function is called by launcher
 protected:
     bool register_io_event_handler(IOEvent ev, AppVoidFuncPtr handler);
 private:
     Thread *_m_thread;
     EventQueue *_m_event_queue;
-    void _launch(); // this function is called by launcher
+    void _on_launch(); // executed in App's own thread, calls run()
     void _release(); // this function is called by kernel to preempt all acquired resources
 };
 
