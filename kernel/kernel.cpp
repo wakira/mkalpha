@@ -1,3 +1,4 @@
+#include "kernel/device/led.h"
 #include "kernel.h"
 #include "rtos.h"
 #include "C12832.h"
@@ -5,7 +6,6 @@
 Kernel::Kernel() {
     _running = false;
     _launcher_instance = 0;
-    _launcher_launch = 0;
     _app_foreground = 0;
     _joystick_fire = 0;
 }
@@ -22,13 +22,12 @@ void Kernel::_panic(std::string info) {
     }
 }
 
-void Kernel::register_launcher(AppBase *instance, AppVoidFuncPtr launcher_ptr) {
+void Kernel::register_launcher(AppBase *instance) {
     _kernel_mutex.lock();
     if (_running) {
         _panic("register_launcher: already running");
     }
     _launcher_instance = instance;
-    _launcher_launch = launcher_ptr;
     _kernel_mutex.unlock();
 }
 
@@ -47,21 +46,21 @@ void Kernel::run_kernel() {
     _setup_isr();
     // launch the first App (Launcher)
     _event_queue->call(callback(this, &Kernel::_launch_app)
-            ,_launcher_instance, _launcher_launch);
+            ,_launcher_instance);
     // execute Event Loop
     _event_queue->dispatch_forever();
 }
 
-void Kernel::launch_app(AppBase *instance, AppVoidFuncPtr launch_ptr) {
+void Kernel::launch_app(AppBase *instance) {
     _event_queue->call(callback(this, &Kernel::_launch_app),
-            instance, launch_ptr);
+            instance);
 }
 
-void Kernel::_launch_app(AppBase *instance, AppVoidFuncPtr launcher_ptr) {
+void Kernel::_launch_app(AppBase *instance) {
     _kernel_mutex.lock();
     _apps_running.push_back(instance);
     _app_foreground = instance;
-    (instance->*launcher_ptr)();
+    instance->_launch();
     _kernel_mutex.unlock();
 }
 
@@ -100,7 +99,26 @@ void Kernel::_setup_isr() {
 }
 
 bool Kernel::register_io_event_handler(AppBase *app, IOEvent event,
-        AppVoidFuncPtr handler) {
+        Callback<void()> handler) {
+    if (event <= JOYSTICK_LONG_PRESS) { // event is not registrable
+        return false;
+    }
     // TODO
     return false;
+}
+
+Device* Kernel::request_device(AppBase *app, IODevice id) {
+    if (_allocated_devices.count(id) != 0) { // already allocated
+        return 0;
+    }
+    switch (id) {
+        case DEVICE_LED1:
+        case DEVICE_LED2:
+        case DEVICE_LED3:
+        case DEVICE_LED4:
+            _allocated_devices[id] = app;
+            return new LedDevice(id);
+        default:
+            return 0; // invalid device id
+    }
 }

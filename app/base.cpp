@@ -20,6 +20,16 @@ void AppBase::_release() {
     // TODO
 }
 
-bool AppBase::register_io_event_handler(IOEvent ev, AppVoidFuncPtr handler) {
+bool AppBase::register_io_event_handler(IOEvent ev, Callback<void()> handler) {
     return Kernel::get_instance().register_io_event_handler(this, ev, handler);
+}
+
+int AppBase::call_in_ms(int ms, Callback<void()> cb) {
+    return _m_event_queue->call_in(ms, cb);
+    // TODO what does the return value mean?, see mbed source code
+}
+
+int AppBase::call_every_ms(int ms, Callback<void()> cb) {
+    return _m_event_queue->call_every(ms, cb);
+    // TODO what does the return value mean?, see mbed source code
 }
