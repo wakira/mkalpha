@@ -9,6 +9,21 @@ void AppBase::_launch() {
     _m_thread->start(callback(this, &AppBase::_on_launch));
 }
 
+void AppBase::_fg() {
+    // TODO request LCD
+    Kernel &k = Kernel::get_instance();
+    // _lcd = (Lcd*)(k.request_device(this, DEVICE_LCD));
+    _m_thread->start(callback(this, &AppBase::on_foreground));
+}
+
+void AppBase::_bg() {
+    // lcd_lock.lock();
+    // delete _lcd;
+    // _lcd = 0;
+    // lcd_lock.unlock();
+    _m_thread->start(callback(this, &AppBase::on_background));
+}
+
 void AppBase::_on_launch() {
     // TODO catch bad_alloc
     _m_event_queue = new EventQueue(32 * EVENTS_EVENT_SIZE); // TODO no magic number

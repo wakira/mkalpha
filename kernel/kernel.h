@@ -25,10 +25,16 @@ public:
         return KERNEL_INSTANCE;
     }
 
+    // syncrhonous calls
     void register_launcher(AppBase *instance);
     bool register_io_event_handler(AppBase *app, IOEvent event, Callback<void()> handler);
     Device* request_device(AppBase *app, IODevice id);
+    // asynchronous calls
+    void put_foreground(AppBase *launcher, AppBase *target);
+    void put_background(AppBase *target);
     void launch_app(AppBase *instance);
+
+    // start the kernel
     void run_kernel(); // run_kernel() never returns
 private:
     // private routines
@@ -36,6 +42,8 @@ private:
     void _launch_app(AppBase *instance);
     void _setup_isr();
     void _on_io_event(IOEvent ev);
+    void _put_foreground(AppBase *target);
+    void _put_background(AppBase *target);
 
     // isr
     void _isr_joystick_fire_rise();

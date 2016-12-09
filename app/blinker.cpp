@@ -2,7 +2,7 @@
 #include "kernel/kernel.h"
 
 void AppBlinker::run() {
-    _led1 = static_cast<Led*> (Kernel::get_instance().request_device(this, DEVICE_LED1));
+    _led1 = (Led*) (Kernel::get_instance().request_device(this, DEVICE_LED1));
     call_every_ms(1000, callback(this, &AppBlinker::_blink));
 }
 
@@ -16,5 +16,4 @@ void AppBlinker::_blink() {
 
 void AppBlinker::release() {
     // stop blinking
-
 }

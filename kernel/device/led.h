@@ -1,3 +1,6 @@
+#ifndef KERNEL_DEVICE_LED_H_
+#define KERNEL_DEVICE_LED_H_
+
 #include "oslib/led.h"
 #include "oslib/io_devices.h"
 #include "mbed.h"
@@ -12,3 +15,5 @@ public:
 private:
     DigitalOut *_led;
 };
+
+#endif

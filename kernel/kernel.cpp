@@ -118,7 +118,25 @@ Device* Kernel::request_device(AppBase *app, IODevice id) {
         case DEVICE_LED4:
             _allocated_devices[id] = app;
             return new LedDevice(id);
+        case DEVICE_LCD:
+            // TODO check if running in kernel thread
+            //return new LcdDevice(app);
         default:
             return 0; // invalid device id
     }
+}
+
+void Kernel::put_foreground(AppBase *launcher, AppBase *target) {
+    if (launcher != _launcher_instance) {
+        return;
+    }
+    _event_queue->call(callback(this, &Kernel::_put_foreground), target);
+}
+
+void Kernel::_put_foreground(AppBase *target) {
+    // put to background the current fg
+    _app_foreground->_fg();
+    // put to foreground target
+    _app_foreground = target;
+    target->_bg();
 }

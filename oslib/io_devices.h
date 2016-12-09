@@ -10,7 +10,8 @@ enum IODevice {
     DEVICE_LED1,
     DEVICE_LED2,
     DEVICE_LED3,
-    DEVICE_LED4
+    DEVICE_LED4,
+    DEVICE_LCD
 };
 
 #endif

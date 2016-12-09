@@ -5,7 +5,7 @@
 
 class Led : public Device {
 public:
-    virtual void set_on() = 0;
+    virtual  void set_on() = 0;
     virtual void set_off() = 0;
     virtual int get_state() = 0;
 };
