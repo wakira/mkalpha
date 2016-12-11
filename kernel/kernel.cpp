@@ -1,4 +1,5 @@
 #include "kernel/device/led.h"
+#include "kernel/device/lcd.h"
 #include "kernel.h"
 #include "rtos.h"
 #include "C12832.h"
@@ -120,7 +121,7 @@ Device* Kernel::request_device(AppBase *app, IODevice id) {
             return new LedDevice(id);
         case DEVICE_LCD:
             // TODO check if running in kernel thread
-            //return new LcdDevice(app);
+            return new LcdDevice(app);
         default:
             return 0; // invalid device id
     }

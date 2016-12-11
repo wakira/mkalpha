@@ -6,6 +6,8 @@
 #include "rtos.h"
 
 
+class Lcd;
+
 class AppBase {
 public:
     AppBase() {
@@ -20,13 +22,13 @@ public:
     void _launch();
     void _fg();
     void _bg();
-    Mutex lcd_lock;
+    Mutex lcd_mutex;
 protected:
     bool register_io_event_handler(IOEvent ev, Callback<void()> handler);
     int call_in_ms(int ms, Callback<void()> ptr);
     int call_every_ms(int ms, Callback<void()> ptr);
 
-    //Lcd *_lcd;
+    Lcd *_lcd;
 private:
     Thread *_m_thread;
     EventQueue *_m_event_queue;

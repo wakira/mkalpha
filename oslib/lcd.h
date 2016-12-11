@@ -2,6 +2,7 @@
 #define OSLIB_LCD_H_
 
 #include "io_devices.h"
+#include "app/base.h"
 
 class C12832;
 
@@ -24,7 +25,7 @@ private:
 
 class Lcd : public Device {
 public:
-    virtual lcd_proxy operator->();
+    virtual lcd_proxy operator->() = 0;
 };
 
 

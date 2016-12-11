@@ -1,5 +1,6 @@
 #include "app/base.h"
 #include "kernel/kernel.h"
+#include "oslib/lcd.h"
 
 
 void AppBase::_launch() {
@@ -12,7 +13,7 @@ void AppBase::_launch() {
 void AppBase::_fg() {
     // TODO request LCD
     Kernel &k = Kernel::get_instance();
-    // _lcd = (Lcd*)(k.request_device(this, DEVICE_LCD));
+    _lcd = (Lcd*)(k.request_device(this, DEVICE_LCD));
     _m_thread->start(callback(this, &AppBase::on_foreground));
 }
 
