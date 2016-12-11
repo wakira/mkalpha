@@ -1,5 +1,6 @@
 #include "blinker.h"
 #include "kernel/kernel.h"
+#include "oslib/lcd.h"
 
 void AppBlinker::run() {
     _led1 = (Led*) (Kernel::get_instance().request_device(this, DEVICE_LED1));
@@ -12,6 +13,16 @@ void AppBlinker::_blink() {
     } else {
         _led1->set_on();
     }
+}
+
+void AppBlinker::on_foreground() {
+    (*lcd)->cls();
+    (*lcd)->locate(0,15);
+    (*lcd)->printf("LCD WORKING");
+}
+
+void AppBlinker::on_background() {
+
 }
 
 void AppBlinker::release() {

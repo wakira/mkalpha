@@ -8,6 +8,7 @@ class AppBlinker : public AppBase {
 public:
     virtual void run();
     virtual void release();
+    virtual void on_foreground();
 private:
     Led *_led1;
     void _blink();

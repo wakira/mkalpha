@@ -28,7 +28,7 @@ protected:
     int call_in_ms(int ms, Callback<void()> ptr);
     int call_every_ms(int ms, Callback<void()> ptr);
 
-    Lcd *_lcd;
+    Lcd *lcd;
 private:
     Thread *_m_thread;
     EventQueue *_m_event_queue;

@@ -60,7 +60,6 @@ void Kernel::launch_app(AppBase *instance) {
 void Kernel::_launch_app(AppBase *instance) {
     _kernel_mutex.lock();
     _apps_running.push_back(instance);
-    _app_foreground = instance;
     instance->_launch();
     _kernel_mutex.unlock();
 }
@@ -136,8 +135,10 @@ void Kernel::put_foreground(AppBase *launcher, AppBase *target) {
 
 void Kernel::_put_foreground(AppBase *target) {
     // put to background the current fg
-    _app_foreground->_fg();
+    if (_app_foreground) {
+        _app_foreground->_bg();
+    }
     // put to foreground target
     _app_foreground = target;
-    target->_bg();
+    target->_fg();
 }
