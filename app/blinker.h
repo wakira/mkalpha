@@ -3,7 +3,8 @@
 
 #include "base.h"
 #include "oslib/led.h"
-#include "util/menu.h"
+
+class LcdMenu;
 
 class AppBlinker : public AppBase {
 public:
@@ -13,6 +14,8 @@ public:
     virtual void on_foreground();
     virtual void on_background();
 private:
+    void _blink_on();
+    void _blink_off();
     bool _blinking;
     Led *_led1;
     void _blink();

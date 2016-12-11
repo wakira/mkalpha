@@ -70,7 +70,7 @@ void Kernel::_on_io_event(IOEvent ev) {
         case JOYSTICK_UP:
         case JOYSTICK_DOWN:
         case JOYSTICK_LEFT:
-        case JOYSTICK_RIGHT:
+        case JOYSTICK_RIGHT: {
             if (!_app_foreground) {
                 return;
             }
@@ -78,9 +78,10 @@ void Kernel::_on_io_event(IOEvent ev) {
             std::map<IOEvent, Callback<void()> > &ev_cb_map = _app_io_handlers[_app_foreground];
             if (ev_cb_map.count(ev) != 0) {
                 Callback<void()> cb = ev_cb_map[ev];
-                _app_foreground->_m_event_queue.call(cb);
+                _app_foreground->_m_event_queue->call(cb);
             }
             break;
+        }
         case JOYSTICK_LONG_PRESS:
             // TODO kill the foreground app, reclaim resources held by that app
             break;
@@ -120,7 +121,7 @@ bool Kernel::register_io_event_handler(AppBase *app, IOEvent event,
 }
 
 void Kernel::unregister_io_event_handler(AppBase *app, IOEvent event) {
-    std::map<IOEvent, Callback<void()> &ev_cb_map = _app_io_handlers[app];
+    std::map<IOEvent, Callback<void()> > &ev_cb_map = _app_io_handlers[app];
     ev_cb_map.erase(event);
 }
 

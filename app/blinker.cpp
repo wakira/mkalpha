@@ -3,7 +3,7 @@
 #include "oslib/lcd.h"
 #include "util/menu.h"
 
-void AppBlinker::AppBlinker() : AppBase() {
+AppBlinker::AppBlinker() : AppBase() {
     _blinking = false;
 }
 

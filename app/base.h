@@ -2,12 +2,12 @@
 #define APP_BASE_H_
 
 #include "oslib/io_events.h"
-#include "kernel/kernel.h"
 #include "mbed.h"
 #include "rtos.h"
 
 
 class Lcd;
+class Kernel;
 
 class AppBase {
     friend class Kernel;
@@ -21,12 +21,11 @@ public:
     virtual void on_foreground() {} // when app goes back to foreground
     virtual void release() {} // when the kernel asks App to release all its resource locks
     Mutex lcd_mutex;
-protected:
     bool register_io_event_handler(IOEvent ev, Callback<void()> handler);
     void call(Callback<void()> cb);
     int call_in_ms(int ms, Callback<void()> cb);
     int call_every_ms(int ms, Callback<void()> cb);
-
+protected:
     Lcd *lcd;
 private:
     Thread *_m_thread;

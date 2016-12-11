@@ -13,10 +13,10 @@ LcdMenu::LcdMenu(AppBase *app, Lcd *lcd) {
 
 void LcdMenu::set_entries(std::list<MenuEntry> list) {
     _items.clear();
-    old_cnt = _cnt;
+    int old_cnt = _cnt;
     _cnt = 0;
     for(std::list<MenuEntry>::iterator it = list.begin();
-            it != list.end(); list++) {
+            it != list.end(); it++) {
         _cnt++;
         _items[_cnt] = (*it);
     }
@@ -31,45 +31,45 @@ void LcdMenu::set_entries(std::list<MenuEntry> list) {
 void LcdMenu::start() {
     _running = true;
     Kernel &k = Kernel::get_instance();
-    k.register_io_handler(_app, JOYSTICK_UP,
+    k.register_io_event_handler(_app, JOYSTICK_UP,
             callback(this, LcdMenu::_joystick_up_handler));
-    k.register_io_handler(_app, JOYSTICK_DOWN,
+    k.register_io_event_handler(_app, JOYSTICK_DOWN,
             callback(this, LcdMenu::_joystick_down_handler));
-    k.register_io_handler(_app, JOYSTICK_FIRE,
+    k.register_io_event_handler(_app, JOYSTICK_FIRE,
             callback(this, LcdMenu::_joystick_fire_handler));
     // show menu
-    (*lcd)->cls();
+    (*_lcd)->cls();
     if (_cnt != 0) {
         _cur_pos = 1;
-        _draw(1);
+        _draw();
     }
 }
 
 void LcdMenu::_draw() {
-    (*lcd)->cls();
+    (*_lcd)->cls();
     // draw previous line (view_pos - 1)
     if (_cur_pos - 1 > 0) {
-        (*lcd)->locate(1,1);
-        (*lcd)->printf("%s", _items[_cur_pos - 1].label.c_str());
+        (*_lcd)->locate(1,1);
+        (*_lcd)->printf("%s", _items[_cur_pos - 1].label.c_str());
     }
     // draw current line (view_pos)
-    (*lcd)->locate(0,2);
+    (*_lcd)->locate(0,2);
     printf("*");
-    (*lcd)->locate(1,2);
-    (*lcd)->printf("%s", _items[_cur_pos].label.c_str());
+    (*_lcd)->locate(1,2);
+    (*_lcd)->printf("%s", _items[_cur_pos].label.c_str());
     // draw next line (view_pos)
     if (_cur_pos + 1 < _cnt) {
-        (*lcd)->locate(1,3);
-        (*lcd)->printf("%s", _items[_cur_pos + 1].label.c_str());
+        (*_lcd)->locate(1,3);
+        (*_lcd)->printf("%s", _items[_cur_pos + 1].label.c_str());
     }
 }
 
 void LcdMenu::stop() {
     _running = false;
     Kernel &k = Kernel::get_instance();
-    k.unregister_io_handler(_app, JOYSTICK_UP);
-    k.unregister_io_handler(_app, JOYSTICK_DOWN);
-    k.unregister_io_handler(_app, JOYSTICK_FIRE);
+    k.unregister_io_event_handler(_app, JOYSTICK_UP);
+    k.unregister_io_event_handler(_app, JOYSTICK_DOWN);
+    k.unregister_io_event_handler(_app, JOYSTICK_FIRE);
 }
 
 void LcdMenu::_joystick_up_handler() {
@@ -93,5 +93,5 @@ void LcdMenu::_joystick_down_handler() {
 }
 
 void LcdMenu::_joystick_fire_handler() {
-    _app->call(_items[cur_pos].func);
+    _app->call(_items[_cur_pos].func);
 }

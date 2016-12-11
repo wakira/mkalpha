@@ -1,13 +1,16 @@
 #ifndef UTIL_MENU_H_
 #define UTIL_MENU_H_
 
-#include "app/base.h"
-#include "oslib/lcd.h"
 #include <string>
 #include <list>
+#include <map>
 #include "mbed.h"
 
+class AppBase;
+class Lcd;
+
 struct MenuEntry {
+    MenuEntry() {} // FIXME should not be like this
     MenuEntry(std::string label, Callback<void()> func) {
         this->label = label;
         this->func = func;
