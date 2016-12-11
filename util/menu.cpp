@@ -32,11 +32,11 @@ void LcdMenu::start() {
     _running = true;
     Kernel &k = Kernel::get_instance();
     k.register_io_event_handler(_app, JOYSTICK_UP,
-            callback(this, LcdMenu::_joystick_up_handler));
+            callback(this, &LcdMenu::_joystick_up_handler));
     k.register_io_event_handler(_app, JOYSTICK_DOWN,
-            callback(this, LcdMenu::_joystick_down_handler));
+            callback(this, &LcdMenu::_joystick_down_handler));
     k.register_io_event_handler(_app, JOYSTICK_FIRE,
-            callback(this, LcdMenu::_joystick_fire_handler));
+            callback(this, &LcdMenu::_joystick_fire_handler));
     // show menu
     (*_lcd)->cls();
     if (_cnt != 0) {
