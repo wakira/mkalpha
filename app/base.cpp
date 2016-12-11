@@ -21,7 +21,7 @@ void AppBase::_fg() {
 
 void AppBase::_bg() {
     lcd_mutex.lock();
-    delete _lcd;
+    delete lcd;
     lcd = 0;
     lcd_mutex.unlock();
     _m_event_queue->call(callback(this, &AppBase::on_background));

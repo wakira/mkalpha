@@ -21,10 +21,6 @@ void AppBlinker::on_foreground() {
     (*lcd)->printf("LCD WORKING");
 }
 
-void AppBlinker::on_background() {
-
-}
-
 void AppBlinker::release() {
     // stop blinking
 }
