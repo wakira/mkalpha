@@ -28,6 +28,7 @@ public:
     // syncrhonous calls
     void register_launcher(AppBase *instance);
     bool register_io_event_handler(AppBase *app, IOEvent event, Callback<void()> handler);
+    void unregister_io_event_handler(AppBase *app, IOEvent event);
     Device* request_device(AppBase *app, IODevice id);
     // asynchronous calls
     void put_foreground(AppBase *launcher, AppBase *target);

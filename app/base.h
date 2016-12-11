@@ -2,6 +2,7 @@
 #define APP_BASE_H_
 
 #include "oslib/io_events.h"
+#include "kernel/kernel.h"
 #include "mbed.h"
 #include "rtos.h"
 
@@ -9,6 +10,7 @@
 class Lcd;
 
 class AppBase {
+    friend class Kernel;
 public:
     AppBase() {
         _m_thread = 0;
@@ -18,15 +20,12 @@ public:
     virtual void on_background() {} // when app is put to background
     virtual void on_foreground() {} // when app goes back to foreground
     virtual void release() {} // when the kernel asks App to release all its resource locks
-    // functions called by kernel
-    void _launch();
-    void _fg();
-    void _bg();
     Mutex lcd_mutex;
 protected:
     bool register_io_event_handler(IOEvent ev, Callback<void()> handler);
-    int call_in_ms(int ms, Callback<void()> ptr);
-    int call_every_ms(int ms, Callback<void()> ptr);
+    void call(Callback<void()> cb);
+    int call_in_ms(int ms, Callback<void()> cb);
+    int call_every_ms(int ms, Callback<void()> cb);
 
     Lcd *lcd;
 private:
@@ -34,6 +33,10 @@ private:
     EventQueue *_m_event_queue;
     void _on_launch(); // executed in App's own thread, calls run()
     void _release(); // this function is called by kernel to preempt all acquired resources
+    // functions called by kernel
+    void _launch();
+    void _fg();
+    void _bg();
 };
 
 #endif

@@ -71,7 +71,15 @@ void Kernel::_on_io_event(IOEvent ev) {
         case JOYSTICK_DOWN:
         case JOYSTICK_LEFT:
         case JOYSTICK_RIGHT:
-            // TODO call foreground app's registered handler
+            if (!_app_foreground) {
+                return;
+            }
+            // call foreground app's registered handler
+            std::map<IOEvent, Callback<void()> > &ev_cb_map = _app_io_handlers[_app_foreground];
+            if (ev_cb_map.count(ev) != 0) {
+                Callback<void()> cb = ev_cb_map[ev];
+                _app_foreground->_m_event_queue.call(cb);
+            }
             break;
         case JOYSTICK_LONG_PRESS:
             // TODO kill the foreground app, reclaim resources held by that app
@@ -103,8 +111,17 @@ bool Kernel::register_io_event_handler(AppBase *app, IOEvent event,
     if (event <= JOYSTICK_LONG_PRESS) { // event is not registrable
         return false;
     }
-    // TODO
-    return false;
+    // TODO do some checking
+    if (_app_io_handlers.count(app) == 0) {
+        _app_io_handlers[app] = std::map<IOEvent, Callback<void()> >();
+    }
+    _app_io_handlers[app][event] = handler;
+    return true;
+}
+
+void Kernel::unregister_io_event_handler(AppBase *app, IOEvent event) {
+    std::map<IOEvent, Callback<void()> &ev_cb_map = _app_io_handlers[app];
+    ev_cb_map.erase(event);
 }
 
 Device* Kernel::request_device(AppBase *app, IODevice id) {
