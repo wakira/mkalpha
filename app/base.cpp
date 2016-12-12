@@ -46,6 +46,10 @@ void AppBase::call(Callback<void()> cb) {
     _m_event_queue->call(cb);
 }
 
+void AppBase::call(Callback<void(std::string)> cb, std::string p1) {
+    _m_event_queue->call(cb, p1);
+}
+
 int AppBase::call_in_ms(int ms, Callback<void()> cb) {
     return _m_event_queue->call_in(ms, cb);
     // TODO what does the return value mean?, see mbed source code

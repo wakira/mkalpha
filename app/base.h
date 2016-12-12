@@ -4,6 +4,7 @@
 #include "oslib/io_events.h"
 #include "mbed.h"
 #include "rtos.h"
+#include <string>
 
 
 class Lcd;
@@ -23,6 +24,7 @@ public:
     Mutex lcd_mutex;
     bool register_io_event_handler(IOEvent ev, Callback<void()> handler);
     void call(Callback<void()> cb);
+    void call(Callback<void(std::string)> cb, std::string p1);
     int call_in_ms(int ms, Callback<void()> cb);
     int call_every_ms(int ms, Callback<void()> cb);
 protected:

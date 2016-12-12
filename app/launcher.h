@@ -2,19 +2,24 @@
 #define APP_LAUNCHER_H_
 
 #include "base.h"
+#include <map>
 #include <list>
-#include <utility>
 #include <string>
+
+class LcdMenu;
 
 class AppLauncher : public AppBase {
 public:
     void register_app(std::string name, AppBase *instance);
     virtual void run();
-    // virtual void go_background();
-    // virtual void go_foreground();
+    virtual void on_background();
+    virtual void on_foreground();
     virtual void release();
 private:
-    std::list<std::pair<std::string, AppBase*> > _app_list;
+    void _menu_click(std::string label);
+    std::map<std::string, AppBase*> _app_list;
+    std::list<std::string> _menu_entries;
+    LcdMenu *_menu;
 };
 
 #endif

@@ -12,14 +12,16 @@ LcdMenu::LcdMenu(AppBase *app, Lcd *lcd) {
     _running = false;
 }
 
-void LcdMenu::set_entries(std::list<MenuEntry> list) {
-    _items.clear();
+void LcdMenu::set_labels(std::list<std::string> list,
+        Callback<void(std::string)> cb) {
+    _labels.clear();
+    _cb = cb;
     int old_cnt = _cnt;
     _cnt = 0;
-    for(std::list<MenuEntry>::iterator it = list.begin();
+    for(std::list<std::string>::iterator it = list.begin();
             it != list.end(); it++) {
         _cnt++;
-        _items[_cnt] = (*it);
+        _labels[_cnt] = (*it);
     }
     if (_cnt != old_cnt) {
         _cur_pos = 1;
@@ -51,15 +53,15 @@ void LcdMenu::_draw() {
     (*_lcd)->locate(0,0);
     // draw previous line (view_pos - 1)
     if (_cur_pos - 1 > 0) {
-        (*_lcd)->printf("   %s\n", _items[_cur_pos - 1].label.c_str());
+        (*_lcd)->printf("   %s\n", _labels[_cur_pos - 1].c_str());
     } else {
         (*_lcd)->printf("\n");
     }
     // draw current line (view_pos)
-    (*_lcd)->printf("x  %s\n", _items[_cur_pos].label.c_str());
+    (*_lcd)->printf("x  %s\n", _labels[_cur_pos].c_str());
     // draw next line (view_pos)
     if (_cur_pos + 1 <= _cnt) {
-        (*_lcd)->printf("   %s", _items[_cur_pos + 1].label.c_str());
+        (*_lcd)->printf("   %s", _labels[_cur_pos + 1].c_str());
     }
 }
 
@@ -92,5 +94,6 @@ void LcdMenu::_joystick_down_handler() {
 }
 
 void LcdMenu::_joystick_fire_handler() {
-    _app->call(_items[_cur_pos].func);
+    // _app->call(_items[_cur_pos].func);
+    _app->call(_cb, _labels[_cur_pos]);
 }

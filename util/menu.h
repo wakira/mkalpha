@@ -9,21 +9,11 @@
 class AppBase;
 class Lcd;
 
-struct MenuEntry {
-    MenuEntry() {} // FIXME should not be like this
-    MenuEntry(std::string label, Callback<void()> func) {
-        this->label = label;
-        this->func = func;
-    }
-
-    std::string label;
-    Callback<void()> func;
-};
-
 class LcdMenu {
 public:
     LcdMenu(AppBase *app, Lcd *lcd);
-    void set_entries(std::list<MenuEntry> list);
+    void set_labels(std::list<std::string> list,
+            Callback<void(std::string)> func);
     void start();
     void stop();
 private:
@@ -37,7 +27,8 @@ private:
     bool _running;
     int _cnt;
     int _cur_pos;
-    std::map<int, MenuEntry> _items;
+    Callback<void(std::string)> _cb;
+    std::map<int, std::string> _labels;
     AppBase *_app;
     Lcd *_lcd;
 };

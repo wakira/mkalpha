@@ -45,6 +45,8 @@ void Kernel::run_kernel() {
     osThreadSetPriority(osThreadGetId(), osPriorityRealtime);
     // set up interrupt handlers
     _setup_isr();
+    C12832 lcd(p5, p7, p6, p8,p11);
+    lcd.cls();
     // launch the first App (Launcher)
     _event_queue->call(callback(this, &Kernel::_launch_app)
             ,_launcher_instance);
@@ -58,6 +60,7 @@ void Kernel::launch_app(AppBase *instance) {
 }
 
 void Kernel::_launch_app(AppBase *instance) {
+    printf("launch new app\n");
     _kernel_mutex.lock();
     _apps_running.push_back(instance);
     instance->_launch();
@@ -133,7 +136,7 @@ void Kernel::_setup_isr() {
 
 bool Kernel::register_io_event_handler(AppBase *app, IOEvent event,
         Callback<void()> handler) {
-    if (event < 0 || event >= JOYSTICK_LONG_PRESS) { // event is not registrable
+    if (event >= JOYSTICK_LONG_PRESS) { // event is not registrable
         return false;
     }
     // TODO do some checking
@@ -170,6 +173,7 @@ Device* Kernel::request_device(AppBase *app, IODevice id) {
 
 void Kernel::put_foreground(AppBase *launcher, AppBase *target) {
     if (launcher != _launcher_instance) {
+        printf("invliad fg\n");
         return;
     }
     _event_queue->call(callback(this, &Kernel::_put_foreground), target);
@@ -178,9 +182,11 @@ void Kernel::put_foreground(AppBase *launcher, AppBase *target) {
 void Kernel::_put_foreground(AppBase *target) {
     // put to background the current fg
     if (_app_foreground) {
+        printf("_fg->bg()\n");
         _app_foreground->_bg();
     }
     // put to foreground target
     _app_foreground = target;
+    printf("target->fg()\n");
     target->_fg();
 }

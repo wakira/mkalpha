@@ -3,6 +3,7 @@
 
 #include "base.h"
 #include "oslib/led.h"
+#include <string>
 
 class LcdMenu;
 
@@ -14,6 +15,7 @@ public:
     virtual void on_foreground();
     virtual void on_background();
 private:
+    void _menu_click(std::string label);
     void _blink_on();
     void _blink_off();
     bool _blinking;
