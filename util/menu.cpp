@@ -8,6 +8,7 @@ LcdMenu::LcdMenu(AppBase *app, Lcd *lcd) {
     _app = app;
     _lcd = lcd;
     _cur_pos = 0;
+    _cnt = 0;
     _running = false;
 }
 
@@ -47,20 +48,18 @@ void LcdMenu::start() {
 
 void LcdMenu::_draw() {
     (*_lcd)->cls();
+    (*_lcd)->locate(0,0);
     // draw previous line (view_pos - 1)
     if (_cur_pos - 1 > 0) {
-        (*_lcd)->locate(1,1);
-        (*_lcd)->printf("%s", _items[_cur_pos - 1].label.c_str());
+        (*_lcd)->printf("   %s\n", _items[_cur_pos - 1].label.c_str());
+    } else {
+        (*_lcd)->printf("\n");
     }
     // draw current line (view_pos)
-    (*_lcd)->locate(0,2);
-    printf("*");
-    (*_lcd)->locate(1,2);
-    (*_lcd)->printf("%s", _items[_cur_pos].label.c_str());
+    (*_lcd)->printf("x  %s\n", _items[_cur_pos].label.c_str());
     // draw next line (view_pos)
-    if (_cur_pos + 1 < _cnt) {
-        (*_lcd)->locate(1,3);
-        (*_lcd)->printf("%s", _items[_cur_pos + 1].label.c_str());
+    if (_cur_pos + 1 <= _cnt) {
+        (*_lcd)->printf("   %s", _items[_cur_pos + 1].label.c_str());
     }
 }
 

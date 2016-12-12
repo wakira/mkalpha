@@ -49,6 +49,10 @@ private:
     // isr
     void _isr_joystick_fire_rise();
     void _isr_joystick_fire_fall();
+    void _isr_joystick_up_rise();
+    void _isr_joystick_down_rise();
+    void _isr_joystick_left_rise();
+    void _isr_joystick_right_rise();
     // TODO add all joystick button handlers
 private:
     // private states
@@ -62,6 +66,10 @@ private:
 
     // IO devices
     InterruptIn *_joystick_fire;
+    InterruptIn *_joystick_up;
+    InterruptIn *_joystick_down;
+    InterruptIn *_joystick_left;
+    InterruptIn *_joystick_right;
     std::map<IODevice, AppBase*> _allocated_devices;
 };
 

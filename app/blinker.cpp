@@ -28,6 +28,7 @@ void AppBlinker::_blink_on() {
 
 void AppBlinker::_blink_off() {
     _blinking = false;
+    _led1->set_off();
 }
 
 void AppBlinker::on_foreground() {

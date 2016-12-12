@@ -100,16 +100,40 @@ void Kernel::_isr_joystick_fire_fall() {
     // TODO determine if it is long press
 }
 
+void Kernel::_isr_joystick_up_rise() {
+    _event_queue->call(callback(this, &Kernel::_on_io_event), JOYSTICK_UP);
+}
+
+void Kernel::_isr_joystick_down_rise() {
+    _event_queue->call(callback(this, &Kernel::_on_io_event), JOYSTICK_DOWN);
+}
+
+void Kernel::_isr_joystick_left_rise() {
+    _event_queue->call(callback(this, &Kernel::_on_io_event), JOYSTICK_LEFT);
+}
+
+void Kernel::_isr_joystick_right_rise() {
+    _event_queue->call(callback(this, &Kernel::_on_io_event), JOYSTICK_RIGHT);
+}
+
 void Kernel::_setup_isr() {
     _joystick_fire = new InterruptIn(p14);
+    _joystick_up = new InterruptIn(p15);
+    _joystick_down = new InterruptIn(p12);
+    _joystick_left = new InterruptIn(p13);
+    _joystick_right = new InterruptIn(p16);
     _joystick_fire->rise(callback(this, &Kernel::_isr_joystick_fire_rise));
     _joystick_fire->fall(callback(this, &Kernel::_isr_joystick_fire_fall));
-    // TODO
+    _joystick_up->rise(callback(this, &Kernel::_isr_joystick_up_rise));
+    _joystick_down->rise(callback(this, &Kernel::_isr_joystick_down_rise));
+    _joystick_left->rise(callback(this, &Kernel::_isr_joystick_left_rise));
+    _joystick_right->rise(callback(this, &Kernel::_isr_joystick_right_rise));
+    // TODO other devices
 }
 
 bool Kernel::register_io_event_handler(AppBase *app, IOEvent event,
         Callback<void()> handler) {
-    if (event <= JOYSTICK_LONG_PRESS) { // event is not registrable
+    if (event < 0 || event >= JOYSTICK_LONG_PRESS) { // event is not registrable
         return false;
     }
     // TODO do some checking
