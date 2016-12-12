@@ -27,6 +27,8 @@ void AppBlinker::_menu_click(std::string label) {
         _blink_on();
     } else if (label == "OFF") {
         _blink_off();
+    } else if (label == "BG") {
+        go_background();
     }
 }
 
@@ -40,10 +42,12 @@ void AppBlinker::_blink_off() {
 }
 
 void AppBlinker::on_foreground() {
+    printf("BLINKER ON_FG\n");
     _menu = new LcdMenu(this, lcd);
     std::list<std::string> list;
     list.push_back("ON");
     list.push_back("OFF");
+    list.push_back("BG");
     _menu->set_labels(list, callback(this, &AppBlinker::_menu_click));
     _menu->start();
 }

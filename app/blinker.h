@@ -10,6 +10,7 @@ class LcdMenu;
 class AppBlinker : public AppBase {
 public:
     AppBlinker();
+protected:
     virtual void run();
     virtual void release();
     virtual void on_foreground();

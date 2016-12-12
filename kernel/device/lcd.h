@@ -2,15 +2,30 @@
 #define KERNEL_DEVICE_LCD_H_
 
 #include "oslib/lcd.h"
+#include "mbed.h"
+
+class LcdFactory;
 
 class LcdDevice : public Lcd {
+    friend LcdFactory;
 public:
-    LcdDevice(AppBase *holder);
     virtual lcd_proxy operator->();
-    ~LcdDevice();
+    virtual ~LcdDevice();
 private:
+    LcdDevice(AppBase *holder, LcdFactory *factory);
     C12832 *_c;
     AppBase *_holder;
+    LcdFactory *_factory;
+};
+
+class LcdFactory {
+public:
+    LcdDevice* request_lcd_device(AppBase *holder);
+
+    void release_lcd_device();
+
+private:
+    Mutex _mutex;
 };
 
 #endif

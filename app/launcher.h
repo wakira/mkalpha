@@ -11,6 +11,7 @@ class LcdMenu;
 class AppLauncher : public AppBase {
 public:
     void register_app(std::string name, AppBase *instance);
+protected:
     virtual void run();
     virtual void on_background();
     virtual void on_foreground();

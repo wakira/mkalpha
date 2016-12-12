@@ -14,16 +14,16 @@ void AppLauncher::register_app(std::string name, AppBase *instance) {
 
 void AppLauncher::run() {
     Kernel::get_instance().put_foreground(this, this);
-    // TODO write a real luancher
-    // Kernel::get_instance().launch_app((*_app_list.begin()).second);
-    // Kernel::get_instance().put_foreground(this, (*_app_list.begin()).second);
 }
 
 void AppLauncher::release() {}
 
 void AppLauncher::_menu_click(std::string label) {
-    Kernel::get_instance().launch_app(_app_list[label]);
-    Kernel::get_instance().put_foreground(this, _app_list[label]);
+    AppBase *instance = _app_list[label];
+    if (!instance->is_running()) {
+        Kernel::get_instance().launch_app(instance);
+    }
+    Kernel::get_instance().put_foreground(this, instance);
 }
 
 void AppLauncher::on_foreground() {
@@ -33,5 +33,7 @@ void AppLauncher::on_foreground() {
 }
 
 void AppLauncher::on_background() {
+    printf("MENU STOP OF LAUNCHER\n");
     _menu->stop();
+    delete _menu;
 }

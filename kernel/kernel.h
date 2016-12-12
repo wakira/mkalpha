@@ -12,6 +12,8 @@
 // defines the singleton kernel
 // we define no destructor since the kernel should run forever
 
+class LcdFactory;
+
 class Kernel {
 private:
     Kernel();
@@ -63,6 +65,7 @@ private:
     std::vector<AppBase*> _apps_running;
     std::map<AppBase*, std::map<IOEvent, Callback<void()> > > _app_io_handlers;
     AppBase *_app_foreground;
+    LcdFactory *_lcd_factory;
 
     // IO devices
     InterruptIn *_joystick_fire;

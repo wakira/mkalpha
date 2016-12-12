@@ -13,23 +13,27 @@ void AppBase::_launch() {
 void AppBase::_fg() {
     // TODO request LCD
     Kernel &k = Kernel::get_instance();
-    lcd_mutex.lock();
     lcd = (Lcd*)(k.request_device(this, DEVICE_LCD));
-    lcd_mutex.unlock();
     _m_event_queue->call(callback(this, &AppBase::on_foreground));
 }
 
 void AppBase::_bg() {
-    lcd_mutex.lock();
+    on_background();
+    _bg_cont();
+    // _m_event_queue->call(callback(this, &AppBase::on_background));
+    // _m_event_queue->call(callback(this, &AppBase::_bg_cont));
+}
+
+void AppBase::_bg_cont() {
     delete lcd;
     lcd = 0;
-    lcd_mutex.unlock();
-    _m_event_queue->call(callback(this, &AppBase::on_background));
 }
 
 void AppBase::_on_launch() {
     // TODO catch bad_alloc
+    // printf("running thread %x\n", Thread::gettid());
     _m_event_queue = new EventQueue(32 * EVENTS_EVENT_SIZE); // TODO no magic number
+    _running = true;
     _m_event_queue->call(callback(this, &AppBase::run));
     _m_event_queue->dispatch_forever();
 }
@@ -58,4 +62,12 @@ int AppBase::call_in_ms(int ms, Callback<void()> cb) {
 int AppBase::call_every_ms(int ms, Callback<void()> cb) {
     return _m_event_queue->call_every(ms, cb);
     // TODO what does the return value mean?, see mbed source code
+}
+
+void AppBase::go_background() {
+    Kernel::get_instance().put_background(this);
+}
+
+bool AppBase::is_running() {
+    return _running;
 }

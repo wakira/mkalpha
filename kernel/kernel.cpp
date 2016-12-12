@@ -9,6 +9,7 @@ Kernel::Kernel() {
     _launcher_instance = 0;
     _app_foreground = 0;
     _joystick_fire = 0;
+    _lcd_factory = new LcdFactory();
 }
 
 void Kernel::_panic(std::string info) {
@@ -39,6 +40,7 @@ void Kernel::run_kernel() {
         // indicate kernel panic
         _panic();
     }
+    printf("RUN KERNEL\n");
     _running = true;
     _kernel_mutex.unlock();
     _event_queue = new EventQueue(32 * EVENTS_EVENT_SIZE); // TODO magic number
@@ -164,8 +166,7 @@ Device* Kernel::request_device(AppBase *app, IODevice id) {
             _allocated_devices[id] = app;
             return new LedDevice(id);
         case DEVICE_LCD:
-            // TODO check if running in kernel thread
-            return new LcdDevice(app);
+            return _lcd_factory->request_lcd_device(app);
         default:
             return 0; // invalid device id
     }
@@ -189,4 +190,18 @@ void Kernel::_put_foreground(AppBase *target) {
     _app_foreground = target;
     printf("target->fg()\n");
     target->_fg();
+}
+
+void Kernel::put_background(AppBase *target) {
+    if (target != _app_foreground) {
+        printf("invalid bg\n");
+        return;
+    }
+    _event_queue->call(callback(this, &Kernel::_put_background), target);
+}
+
+void Kernel::_put_background(AppBase *target) {
+    _app_foreground->_bg();
+    _app_foreground = _launcher_instance;
+    _app_foreground->_fg();
 }
