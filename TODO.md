@@ -1,2 +1,3 @@
-1. LCD IO
-2. Menu Library
+1. bg, fg
+2. More apps
+3. More devices
