@@ -23,6 +23,7 @@ public:
     int call_in_ms(int ms, Callback<void()> cb);
     int call_every_ms(int ms, Callback<void()> cb);
     bool is_running();
+    Mutex lcd_mutex;
 protected:
     virtual void run() = 0; // when app is first run
     virtual void on_background() {} // when app is put to background

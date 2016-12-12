@@ -41,7 +41,9 @@ void LcdMenu::start() {
     k.register_io_event_handler(_app, JOYSTICK_FIRE,
             callback(this, &LcdMenu::_joystick_fire_handler));
     // show menu
+    _app->lcd_mutex.lock();
     (*_lcd)->cls();
+    _app->lcd_mutex.unlock();
     if (_cnt != 0) {
         _cur_pos = 1;
         _draw();
@@ -49,6 +51,7 @@ void LcdMenu::start() {
 }
 
 void LcdMenu::_draw() {
+    _app->lcd_mutex.lock();
     (*_lcd)->cls();
     (*_lcd)->locate(0,0);
     // draw previous line (view_pos - 1)
@@ -63,6 +66,7 @@ void LcdMenu::_draw() {
     if (_cur_pos + 1 <= _cnt) {
         (*_lcd)->printf("   %s", _labels[_cur_pos + 1].c_str());
     }
+    _app->lcd_mutex.unlock();
 }
 
 void LcdMenu::stop() {

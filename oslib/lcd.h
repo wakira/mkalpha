@@ -6,19 +6,15 @@
 #include "C12832.h"
 #include "mbed.h"
 
-
 class lcd_proxy {
 public:
     lcd_proxy(AppBase *holder, C12832 *c) {
         _holder = holder;
         _c = c;
-        // _holder->lcd_mutex.lock();
     }
     ~lcd_proxy() {
-        // _holder->lcd_mutex.unlock();
     }
     C12832* operator->() {
-        // TODO check if foreground
         return _c;
     }
 private:

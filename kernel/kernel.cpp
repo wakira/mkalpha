@@ -163,6 +163,7 @@ Device* Kernel::request_device(AppBase *app, IODevice id) {
         case DEVICE_LED2:
         case DEVICE_LED3:
         case DEVICE_LED4:
+            // TODO use factory instead
             _allocated_devices[id] = app;
             return new LedDevice(id);
         case DEVICE_LCD:

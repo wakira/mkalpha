@@ -29,7 +29,7 @@ LcdDevice* LcdFactory::request_lcd_device(AppBase *holder) {
 }
 
 void LcdFactory::release_lcd_device() {
-    printf("%x lcd release\n", Thread::gettid());
     _mutex.unlock();
+    printf("%x lcd release\n", Thread::gettid());
 }
 
