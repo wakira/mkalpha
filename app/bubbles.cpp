@@ -5,9 +5,6 @@
 
 AppBubbles::AppBubbles() : AppBase() {
     foreground = false;
-    lcd = (Lcd*)(Kernel::get_instance().request_device(this, DEVICE_LCD));
-    width = (*lcd)->width();
-    height = (*lcd)->height();
 };
 
 void AppBubbles::run() {
@@ -27,38 +24,42 @@ void AppBubbles::release() { }
 
 void AppBubbles::on_foreground() {
     printf("BUBBLES ON_FG\n");
-    foreground = true;
+
+    lcd_mutex.lock();
+    width = (*lcd)->width();
+    height = (*lcd)->height();
+    lcd_mutex.unlock();
 
     Kernel& kernel = Kernel::get_instance();
     kernel.register_io_event_handler(this, JOYSTICK_FIRE,
             callback(this, &AppBubbles::on_joystick_fire));
-} 
+    foreground = true;
+}
 
 void AppBubbles::on_background() {
     foreground = false;
+    printf("BUBBLES ON_BG\n");
 
     Kernel& kernel = Kernel::get_instance();
     kernel.unregister_io_event_handler(this, JOYSTICK_FIRE);
-
-    printf("BUBBLES ON_BG\n");
 }
 
 void AppBubbles::proceed() {
-    if (foreground == true) {
+    if (foreground) {
+        lcd_mutex.lock();
         (*lcd)->cls();
         for (int ind = 0; ind < NUM_BUBBLES; ind++) {
             Bubble &b = bubbles[ind];
-            (*lcd)->circle(b.x, b.y, b.r, 1);
+
+            b.x += b.dx;
+            b.y += b.dy;
+            bool draw = true;
+            if (b.x - b.r < 0 || width <= b.x + b.r) { b.dx *= -1; draw = false;}
+            if (b.y - b.r < 0 || height <= b.y + b.r) { b.dy *= -1; draw = false;}
+            if (draw) { (*lcd)->circle(b.x, b.y, b.r, 1); };
         }
         (*lcd)->copy_to_lcd();
-    }
-    for (int ind = 0; ind < NUM_BUBBLES; ind++) {
-        Bubble &b = bubbles[ind];
-
-        b.x += b.dx;
-        b.y += b.dy;
-        if (b.x - b.r < 0 || width <= b.x + b.r) { b.dx *= -1; }
-        if (b.y - b.r < 0 || height <= b.y + b.r) { b.dy *= -1; }
+        lcd_mutex.unlock();
     }
 }
 

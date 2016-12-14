@@ -27,7 +27,6 @@ private:
     const static int BUBBLES_FPS = 25;
     const static int NUM_BUBBLES = 10;
     Bubble bubbles[NUM_BUBBLES];
-    Lcd* lcd;
     int width;
     int height;
 
