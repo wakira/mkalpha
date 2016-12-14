@@ -22,7 +22,6 @@ protected:
     virtual void on_background();
 private:
     virtual void proceed();
-    virtual void on_joystick_fire();
 
     const static int BUBBLES_FPS = 25;
     const static int NUM_BUBBLES = 10;

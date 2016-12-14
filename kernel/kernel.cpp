@@ -88,7 +88,7 @@ void Kernel::_on_io_event(IOEvent ev) {
             break;
         }
         case JOYSTICK_LONG_PRESS:
-            // TODO kill the foreground app, reclaim resources held by that app
+            _put_background(_app_foreground);
             break;
         // and other events...
         default:
@@ -97,12 +97,17 @@ void Kernel::_on_io_event(IOEvent ev) {
 }
 
 void Kernel::_isr_joystick_fire_rise() {
-    // TODO determine if it is long press
-    _event_queue->call(callback(this, &Kernel::_on_io_event), JOYSTICK_FIRE);
+    _fire_timer.start();
 }
 
 void Kernel::_isr_joystick_fire_fall() {
-    // TODO determine if it is long press
+    _fire_timer.stop();
+    if (_fire_timer.read_ms() > 500) { // TODO another magic number
+        _event_queue->call(callback(this, &Kernel::_on_io_event), JOYSTICK_LONG_PRESS);
+    } else {
+        _event_queue->call(callback(this, &Kernel::_on_io_event), JOYSTICK_FIRE);
+    }
+    _fire_timer.reset();
 }
 
 void Kernel::_isr_joystick_up_rise() {
@@ -202,6 +207,9 @@ void Kernel::put_background(AppBase *target) {
 }
 
 void Kernel::_put_background(AppBase *target) {
+    if (target == _launcher_instance) {
+        return;
+    }
     _app_foreground->_bg();
     _app_foreground = _launcher_instance;
     _app_foreground->_fg();

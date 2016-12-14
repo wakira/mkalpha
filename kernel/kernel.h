@@ -69,6 +69,7 @@ private:
 
     // IO devices
     InterruptIn *_joystick_fire;
+    Timer _fire_timer;
     InterruptIn *_joystick_up;
     InterruptIn *_joystick_down;
     InterruptIn *_joystick_left;

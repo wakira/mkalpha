@@ -30,18 +30,11 @@ void AppBubbles::on_foreground() {
     height = (*lcd)->height();
     lcd_mutex.unlock();
 
-    Kernel& kernel = Kernel::get_instance();
-    kernel.register_io_event_handler(this, JOYSTICK_FIRE,
-            callback(this, &AppBubbles::on_joystick_fire));
     foreground = true;
 }
 
 void AppBubbles::on_background() {
     foreground = false;
-    printf("BUBBLES ON_BG\n");
-
-    Kernel& kernel = Kernel::get_instance();
-    kernel.unregister_io_event_handler(this, JOYSTICK_FIRE);
 }
 
 void AppBubbles::proceed() {
@@ -61,8 +54,4 @@ void AppBubbles::proceed() {
         (*lcd)->copy_to_lcd();
         lcd_mutex.unlock();
     }
-}
-
-void AppBubbles::on_joystick_fire() {
-    go_background();
 }
