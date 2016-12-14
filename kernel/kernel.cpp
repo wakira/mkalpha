@@ -43,7 +43,7 @@ void Kernel::run_kernel() {
     printf("RUN KERNEL\n");
     _running = true;
     _kernel_mutex.unlock();
-    _event_queue = new EventQueue(32 * EVENTS_EVENT_SIZE); // TODO magic number
+    _event_queue = new EventQueue(12 * EVENTS_EVENT_SIZE); // TODO magic number
     osThreadSetPriority(osThreadGetId(), osPriorityRealtime);
     // set up interrupt handlers
     _setup_isr();
