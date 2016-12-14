@@ -7,7 +7,7 @@ void AppBase::_launch() {
     // get a new event queue
     // TODO catch bad_alloc
     _m_thread = new Thread();
-    _m_event_queue = new EventQueue(32 * EVENTS_EVENT_SIZE); // TODO no magic number
+    _m_event_queue = new EventQueue(8 * EVENTS_EVENT_SIZE); // TODO no magic number
     _m_event_queue->call(callback(this, &AppBase::run));
     _m_thread->start(callback(this, &AppBase::_on_launch));
 }
