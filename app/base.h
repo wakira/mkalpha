@@ -22,13 +22,14 @@ public:
     void call(Callback<void(std::string)> cb, std::string p1);
     int call_in_ms(int ms, Callback<void()> cb);
     int call_every_ms(int ms, Callback<void()> cb);
+    void exit();
     bool is_running();
     Mutex lcd_mutex;
 protected:
     virtual void run() = 0; // when app is first run
     virtual void on_background() {} // when app is put to background
     virtual void on_foreground() {} // when app goes back to foreground
-    virtual void release() {} // when the kernel asks App to release all its resource locks
+    virtual void on_release() {} // when app is terminated
     bool register_io_event_handler(IOEvent ev, Callback<void()> handler);
     void go_background();
     Lcd *lcd;
@@ -37,9 +38,10 @@ private:
     Thread *_m_thread;
     EventQueue *_m_event_queue;
     void _on_launch(); // executed in App's own thread, calls run()
-    void _release(); // this function is called by kernel to preempt all acquired resources
+    void _terminate(); // terminate app's thread
     // functions called by kernel
     void _launch();
+    void _release();
     void _fg();
     void _bg();
     void _bg_cont();

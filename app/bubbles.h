@@ -17,7 +17,7 @@ public:
     AppBubbles();
 protected:
     virtual void run();
-    virtual void release();
+    virtual void on_release();
     virtual void on_foreground();
     virtual void on_background();
 private:

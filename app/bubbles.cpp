@@ -20,7 +20,9 @@ void AppBubbles::run() {
     call_every_ms(1000 / BUBBLES_FPS, callback(this, &AppBubbles::proceed));
 }
 
-void AppBubbles::release() { }
+void AppBubbles::on_release() {
+    // nothing to do
+}
 
 void AppBubbles::on_foreground() {
     printf("BUBBLES ON_FG\n");

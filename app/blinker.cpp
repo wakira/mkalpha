@@ -54,6 +54,6 @@ void AppBlinker::on_background() {
     delete _menu;
 }
 
-void AppBlinker::release() {
-    _blinking = false;
+void AppBlinker::on_release() {
+    _blink_off();
 }

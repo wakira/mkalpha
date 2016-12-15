@@ -39,8 +39,20 @@ void AppBase::_on_launch() {
     _m_event_queue->dispatch_forever();
 }
 
+
 void AppBase::_release() {
-    // TODO
+    // _m_event_queue->call(callback(this, &AppBase::on_background)); // TODO do we need to call this?
+    _m_event_queue->call(callback(this, &AppBase::on_release));
+    _m_event_queue->call(callback(this, &AppBase::_terminate));
+    _m_thread->join();
+    delete _m_thread;
+    delete _m_event_queue;
+    _running = false;
+    printf("after _release\n");
+}
+
+void AppBase::_terminate() {
+    _m_thread->terminate();
 }
 
 bool AppBase::register_io_event_handler(IOEvent ev, Callback<void()> handler) {
@@ -63,6 +75,10 @@ int AppBase::call_in_ms(int ms, Callback<void()> cb) {
 int AppBase::call_every_ms(int ms, Callback<void()> cb) {
     return _m_event_queue->call_every(ms, cb);
     // TODO what does the return value mean?, see mbed source code
+}
+
+void AppBase::exit() {
+    Kernel::get_instance().stop_app(this);
 }
 
 void AppBase::go_background() {

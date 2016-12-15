@@ -8,7 +8,8 @@ enum IOEvent {
     JOYSTICK_RIGHT,
     JOYSTICK_FIRE,
     WEBSOCKET_IN, // wifi
-    JOYSTICK_LONG_PRESS // not registerble
+    JOYSTICK_LONG_PRESS, // not registerble
+    JOYSTICK_LONGER_PRESS // not registerble
 };
 
 #endif

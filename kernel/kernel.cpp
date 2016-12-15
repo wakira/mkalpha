@@ -61,12 +61,37 @@ void Kernel::launch_app(AppBase *instance) {
             instance);
 }
 
+void Kernel::stop_app(AppBase *instance) {
+    _event_queue->call(callback(this, &Kernel::_stop_app),
+            instance);
+}
+
 void Kernel::_launch_app(AppBase *instance) {
     printf("launch new app\n");
-    _kernel_mutex.lock();
-    _apps_running.push_back(instance);
+    _kernel_mutex.lock(); // TODO it seems that there is no need for locks
+    // _apps_running.push_back(instance);
     instance->_launch();
     _kernel_mutex.unlock();
+}
+
+void Kernel::_stop_app(AppBase *instance) {
+    printf("stop app\n");
+    if (_app_foreground == _launcher_instance) {
+        printf("do not kill launcher\n");
+        return;
+    }
+    if (_app_foreground == instance) {
+        _put_background(instance);
+    }
+    instance->_release();
+    for(std::list<Device*>::iterator it = _app_devices[instance].begin();
+            it != _app_devices[instance].end(); it++) {
+        IODevice id = _allocated_devices_rev[*it];
+        _allocated_devices_rev.erase(*it);
+        _allocated_devices.erase(id);
+        delete *it;
+    }
+    _app_devices[instance].clear();
 }
 
 void Kernel::_on_io_event(IOEvent ev) {
@@ -90,6 +115,9 @@ void Kernel::_on_io_event(IOEvent ev) {
         case JOYSTICK_LONG_PRESS:
             _put_background(_app_foreground);
             break;
+        case JOYSTICK_LONGER_PRESS:
+            _stop_app(_app_foreground);
+            break;
         // and other events...
         default:
             _panic("invalid io event");
@@ -102,10 +130,17 @@ void Kernel::_isr_joystick_fire_rise() {
 
 void Kernel::_isr_joystick_fire_fall() {
     _fire_timer.stop();
-    if (_fire_timer.read_ms() > 500) { // TODO another magic number
-        _event_queue->call(callback(this, &Kernel::_on_io_event), JOYSTICK_LONG_PRESS);
+    // TODO another magic number
+    if (_fire_timer.read_ms() > 1500) {
+        _event_queue->call(callback(this, &Kernel::_on_io_event),
+                JOYSTICK_LONGER_PRESS);
+    }
+    else if (_fire_timer.read_ms() > 300) {
+        _event_queue->call(callback(this, &Kernel::_on_io_event),
+                JOYSTICK_LONG_PRESS);
     } else {
-        _event_queue->call(callback(this, &Kernel::_on_io_event), JOYSTICK_FIRE);
+        _event_queue->call(callback(this, &Kernel::_on_io_event),
+                JOYSTICK_FIRE);
     }
     _fire_timer.reset();
 }
@@ -167,10 +202,16 @@ Device* Kernel::request_device(AppBase *app, IODevice id) {
         case DEVICE_LED1:
         case DEVICE_LED2:
         case DEVICE_LED3:
-        case DEVICE_LED4:
-            // TODO use factory instead
-            _allocated_devices[id] = app;
-            return new LedDevice(id);
+        case DEVICE_LED4: {
+            Device *device = new LedDevice(id);
+            _allocated_devices[id] = device;
+            _allocated_devices_rev[device] = id;
+            if (_app_devices.count(app) == 0) {
+                _app_devices[app] = std::list<Device*>();
+            }
+            _app_devices[app].push_back(device);
+            return device;
+        }
         case DEVICE_LCD:
             return _lcd_factory->request_lcd_device(app);
         default:
@@ -208,6 +249,7 @@ void Kernel::put_background(AppBase *target) {
 
 void Kernel::_put_background(AppBase *target) {
     if (target == _launcher_instance) {
+        printf("do not put launcher to bg\n");
         return;
     }
     _app_foreground->_bg();
