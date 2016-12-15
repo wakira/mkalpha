@@ -33,15 +33,12 @@ void AppBase::_bg_cont() {
 }
 
 void AppBase::_on_launch() {
-    // TODO catch bad_alloc
-    // printf("running thread %x\n", Thread::gettid());
     _running = true;
     _m_event_queue->dispatch_forever();
 }
 
 
 void AppBase::_release() {
-    // _m_event_queue->call(callback(this, &AppBase::on_background)); // TODO do we need to call this?
     _m_event_queue->call(callback(this, &AppBase::on_release));
     _m_event_queue->call(callback(this, &AppBase::_terminate));
     _m_thread->join();

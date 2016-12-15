@@ -9,7 +9,8 @@ struct Bubble {
     int x, y, dx, dy, r;
     Bubble() {}
     ~Bubble() {}
-    Bubble(int x_, int y_, int dx_, int dy_, int r_): x(x_), y(y_), dx(dx_), dy(dy_), r(r_) {}
+    Bubble(int x_, int y_, int dx_, int dy_, int r_):
+        x(x_), y(y_), dx(dx_), dy(dy_), r(r_) {}
 };
 
 class AppBubbles : public AppBase {

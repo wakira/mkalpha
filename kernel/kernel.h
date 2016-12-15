@@ -29,7 +29,8 @@ public:
 
     // syncrhonous calls
     void register_launcher(AppBase *instance);
-    bool register_io_event_handler(AppBase *app, IOEvent event, Callback<void()> handler);
+    bool register_io_event_handler(AppBase *app, IOEvent event,
+            Callback<void()> handler);
     void unregister_io_event_handler(AppBase *app, IOEvent event);
     Device* request_device(AppBase *app, IODevice id);
     // asynchronous calls
@@ -57,7 +58,6 @@ private:
     void _isr_joystick_down_rise();
     void _isr_joystick_left_rise();
     void _isr_joystick_right_rise();
-    // TODO add all joystick button handlers
 private:
     // private states
     Mutex _kernel_mutex;
@@ -65,7 +65,8 @@ private:
     bool _running;
     AppBase *_launcher_instance;
     // std::list<AppBase*> _apps_running;
-    std::map<AppBase*, std::map<IOEvent, Callback<void()> > > _app_io_handlers;
+    std::map<AppBase*, std::map<IOEvent, Callback<void()> > >
+        _app_io_handlers;
     AppBase *_app_foreground;
     LcdFactory *_lcd_factory;
 

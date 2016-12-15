@@ -105,7 +105,8 @@ void Kernel::_on_io_event(IOEvent ev) {
                 return;
             }
             // call foreground app's registered handler
-            std::map<IOEvent, Callback<void()> > &ev_cb_map = _app_io_handlers[_app_foreground];
+            std::map<IOEvent, Callback<void()> > &ev_cb_map =
+                _app_io_handlers[_app_foreground];
             if (ev_cb_map.count(ev) != 0) {
                 Callback<void()> cb = ev_cb_map[ev];
                 _app_foreground->_m_event_queue->call(cb);
