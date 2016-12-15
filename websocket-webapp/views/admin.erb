@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title></title>
+  </head>
+  <body>
+    Hello, admin!
+    <form id="form">
+      <input type="text" id="input" placeholder="send a message"></input>
+    </form>
+    <div id="msgs"></div>
+  </body>
+
+  <script type="text/javascript">
+  window.onload = function(){
+    (function(){
+      var show = function(el){
+        return function(msg){ el.innerHTML = msg + '<br />' + el.innerHTML; }
+      }(document.getElementById('msgs'));
+
+      var ws       = new WebSocket('ws://' + window.location.host + '/ws/client');
+      ws.onclose   = function()  { show('websocket closed'); }
+      ws.onmessage = function(m) { show('' +  m.data); };
+
+      var sender = function(f){
+        var input     = document.getElementById('input');
+        input.onclick = function(){ input.value = "" };
+        f.onsubmit    = function(){
+          ws.send('admin: ' + input.value);
+          input.value = "";
+          return false;
+        }
+      }(document.getElementById('form'));
+    })();
+  }
+  </script>
+</html>
